@@ -1,6 +1,4 @@
 FROM centos:centos7
-MAINTAINER Jonathan Blake <jona.wayne.blake@gmail.com>
-
 
 # Install Ruby 2.1.0
 ADD install_ruby.sh /tmp/

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-DB_NAME=${POSTGRES_DB:-}
-DB_USER=${POSTGRES_USER:-}
-DB_PASS=${POSTGRES_PASSWORD:-}
+DB_NAME=${POSTGRES_DB:-agree}
+DB_USER=${POSTGRES_USER:-docker}
+DB_PASS=${POSTGRES_PASSWORD:-docker}
 PG_CONFDIR="/var/lib/pgsql/data"
 
 __create_user() {
@@ -21,7 +21,7 @@ if [ -n "${DB_USER}" ]; then
   fi
     echo "Creating user \"${DB_USER}\"..."
     echo "CREATE ROLE ${DB_USER} with CREATEROLE login superuser PASSWORD '${DB_PASS}';" |
-      su - postgres -H postgres --single \
+      sudo -u postgres -H postgres --single \
        -c config_file=${PG_CONFDIR}/postgresql.conf -D ${PG_CONFDIR}
   
 fi
@@ -29,13 +29,13 @@ fi
 if [ -n "${DB_NAME}" ]; then
   echo "Creating database \"${DB_NAME}\"..."
   echo "CREATE DATABASE ${DB_NAME};" | \
-    su - postgres -H postgres --single \
+    sudo -u postgres -H postgres --single \
      -c config_file=${PG_CONFDIR}/postgresql.conf -D ${PG_CONFDIR}
 
   if [ -n "${DB_USER}" ]; then
     echo "Granting access to database \"${DB_NAME}\" for user \"${DB_USER}\"..."
     echo "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} to ${DB_USER};" |
-      su - postgres -H postgres --single \
+      sudo -u postgres -H postgres --single \
       -c config_file=${PG_CONFDIR}/postgresql.conf -D ${PG_CONFDIR}
   fi
 fi

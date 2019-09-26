@@ -10,13 +10,10 @@ RUN /tmp/install_ruby.sh
 RUN gem install "rubygems-update:<3.0.0" --no-document
 RUN update_rubygems
 
-RUN yum -y update; yum clean all
-RUN yum -y install sudo epel-release; yum clean all
-
 RUN yum install gcc-c++ -y 
 
-# Install Postgresql devel tool
-
+RUN yum -y update; yum clean all
+RUN yum -y install sudo epel-release; yum clean all
 RUN yum -y install postgresql-devel postgresql-server postgresql postgresql-contrib supervisor pwgen; yum clean all
 
 ADD ./postgresql-setup /usr/bin/postgresql-setup
@@ -34,9 +31,10 @@ ADD ./postgresql.conf /var/lib/pgsql/data/postgresql.conf
 
 RUN chown -v postgres.postgres /var/lib/pgsql/data/postgresql.conf
 
-RUN echo "host    all             all             0.0.0.0/0               md5" >> /var/lib/pgsql/data/pg_hba.conf
+ADD ./pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
 
 VOLUME ["/var/lib/pgsql"]
 
-# Run PostgreSQL Server
+EXPOSE 5432
+
 CMD ["/bin/bash", "/start_postgres.sh"]
